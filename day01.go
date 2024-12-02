@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"sort"
 	"time"
 )
 
@@ -22,27 +21,20 @@ func main() {
 	scanner.Split(bufio.ScanLines)
 
 	left := []int{}
-	right := []int{}
+	right := map[int]int{}
 	var leftNumber, rightNumber int
 
 	for scanner.Scan() {
 		fmt.Sscanf(scanner.Text(), "%d %d", &leftNumber, &rightNumber)
 		left = append(left, leftNumber)
-		right = append(right, rightNumber)
+		right[rightNumber]++
+
 	}
 
-	sort.Ints(left)
-	sort.Ints(right)
-
-	var distanceSum = 0
+	var total = 0
 	for i := 0; i < len(left); i++ {
-		var dist = left[i] - right[i]
-		if dist < 0 {
-			distanceSum += -dist
-		} else {
-			distanceSum += dist
-		}
+		total += left[i] * right[left[i]]
 	}
 
-	println(distanceSum)
+	fmt.Println(total)
 }
