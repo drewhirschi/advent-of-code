@@ -81,13 +81,19 @@ function printBoard(board: string[][]) {
     console.log("\n")
 }
 
-function printHeader() {
-    console.log('     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20')
-}
+
 
 function printFooter() {
     console.log(''.padEnd(21, '-'))
 }
+
+
+function validDiagonal(val1: string | null, val2: string | null) {
+    return val1 == "S" && val2 == "M" || val1 == "M" && val2 == "S"
+}
+
+
+
 //set up the board
 let i = 0
 const board: string[][] = [[]]
@@ -109,29 +115,29 @@ printBoard(board)
 
 
 
-const moves = ['up', 'down', 'left', 'right', 'upLeft', 'upRight', 'downLeft', 'downRight'] as const
+// const moves = ['up', 'down', 'left', 'right', 'upLeft', 'upRight', 'downLeft', 'downRight'] as const
+const moves = ['upLeft', 'upRight', 'downLeft', 'downRight'] as const
 
-const found = []
+const found: { x: number, y: number, move?: typeof moves[number] }[] = []
 
-for (let j = 0; j < boardHeight; j++) {
-    for (let i = 0; i < boardWidth; i++) {
-        if (board[j][i] == 'X') {
-            for (const move of moves) {
-                if (getCellValue(board, i, j, move, 1) == 'M'
-                    && getCellValue(board, i, j, move, 2) == 'A'
-                    && getCellValue(board, i, j, move, 3) == 'S') {
-                    found.push({ x: i, y: j, move })
-                }
-            }
+for (let j = 1; j < boardHeight - 1; j++) {
+    for (let i = 1; i < boardWidth - 1; i++) {
+        if (board[j][i] == 'A'
+            && validDiagonal(getCellValue(board, i, j, 'upLeft', 1), getCellValue(board, i, j, 'downRight', 1))
+            && validDiagonal(getCellValue(board, i, j, 'upRight', 1), getCellValue(board, i, j, 'downLeft', 1))
+        ) {
+
+
+            found.push({ x: i, y: j })
         }
     }
 }
 
 const foundBoard: string[][] = Array.from({ length: boardHeight }, () => Array(boardWidth).fill('.'));
 
-for (const { x, y, move } of found) {
-    writeValue(foundBoard, x, y, move, 'XMAS')
-}
+// for (const { x, y, move } of found) {
+//     writeValue(foundBoard, x, y, move, 'XMAS')
+// }
 
 console.log(`found ${found.length} XMASes`)
 printBoard(foundBoard)
